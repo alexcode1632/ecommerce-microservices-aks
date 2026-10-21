@@ -1,0 +1,13 @@
+# ClusterIP — solo accesible dentro del clúster (RNF-13)
+apiVersion: v1
+kind: Service
+metadata:
+  name: usuarios-svc
+  namespace: default
+spec:
+  type: ClusterIP
+  selector:
+    app: usuarios
+  ports:
+    - port: 8080
+      targetPort: 8080

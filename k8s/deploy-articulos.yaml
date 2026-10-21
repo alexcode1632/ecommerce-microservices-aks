@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: articulos-deploy
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: articulos
+  template:
+    metadata:
+      labels:
+        app: articulos
+    spec:
+      containers:
+        - name: articulos
+          image: t92023630200acr.azurecr.io/articulos:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_HOST
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
+            - name: USUARIOS_URL
+              value: "http://usuarios-svc:8080/Usuarios/rest/ws"
+            - name: COMPRAS_URL
+              value: "http://compras-svc:8080/Compras/rest/ws"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

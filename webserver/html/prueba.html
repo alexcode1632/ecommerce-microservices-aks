@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    charset="utf-8">
+
+  <title>E-Commerce</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --azul:#2563eb;
+      --azul-oscuro:#0f172a;
+      --cyan:#06b6d4;
+      --gris:#64748b;
+      --fondo:#f8fafc;
+      --card:#ffffff;
+      --borde:#e2e8f0;
+      --verde:#16a34a;
+      --rojo:#dc2626;
+      --sombra:0 18px 45px rgba(15,23,42,.10);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:#0f172a;
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.14), transparent 30%),
+        radial-gradient(circle at top right, rgba(6,182,212,.16), transparent 32%),
+        linear-gradient(180deg,#f8fafc 0%, #eef4ff 100%);
+    }
+
+    .app-header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      backdrop-filter: blur(18px);
+      background:linear-gradient(135deg, rgba(15,23,42,.96), rgba(37,99,235,.92), rgba(6,182,212,.88));
+      color:white;
+      border-bottom:1px solid rgba(255,255,255,.18);
+      box-shadow:0 12px 30px rgba(15,23,42,.16);
+    }
+
+    .app-header-inner{
+      width:min(980px,100%);
+      margin:auto;
+      padding:18px 18px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      justify-content:space-between;
+    }
+
+    .brand-box{ display:flex; align-items:center; gap:14px; }
+
+    .brand-icon{
+      width:54px; height:54px;
+      border-radius:18px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.24);
+      display:flex; align-items:center; justify-content:center;
+      font-size:28px;
+    }
+
+    .brand-title{
+      margin:0;
+      font-size:clamp(1.45rem,4vw,2rem);
+      font-weight:800;
+    }
+
+    .brand-pill{
+      margin:0; font-size:.85rem; opacity:.9;
+      padding:6px 12px; border-radius:999px;
+      background:rgba(255,255,255,.13);
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    .app-shell{
+      width:min(760px,100%);
+      margin:0 auto;
+      padding:28px 16px 52px;
+    }
+
+    #login, #menu, #alta_usuario, #consulta_usuario,
+    #captura_articulo, #compra_articulos, #carrito_compra{
+      width:100% !important;
+      max-width:560px;
+      margin:0 auto;
+      padding:26px;
+      border:1px solid rgba(226,232,240,.95);
+      border-radius:28px;
+      background:rgba(255,255,255,.92);
+      box-shadow:var(--sombra);
+      backdrop-filter: blur(14px);
+      animation:fadeUp .28s ease both;
+    }
+
+    @keyframes fadeUp{
+      from{ opacity:0; transform:translateY(10px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    h2{ margin:0 0 22px !important; font-size:clamp(1.45rem,5vw,2.1rem); font-weight:850; color:#0f172a; }
+    h3{ color:#0f172a; font-weight:850; }
+
+    input, select, textarea{
+      width:100% !important;
+      min-height:46px;
+      margin-top:7px; margin-bottom:8px;
+      border:1px solid var(--borde);
+      border-radius:16px;
+      background:#f8fafc; color:#0f172a;
+      padding:11px 14px; outline:none;
+      font-size:1rem;
+    }
+
+    textarea{ min-height:110px; resize:vertical; }
+
+    input:focus, select:focus, textarea:focus{
+      border-color:rgba(37,99,235,.8);
+      background:white;
+      box-shadow:0 0 0 4px rgba(37,99,235,.12);
+    }
+
+    input[type="file"]{ padding:10px; background:white; }
+
+    button{
+      width:100% !important;
+      min-height:46px;
+      border:0 !important;
+      border-radius:16px !important;
+      font-weight:750;
+      background:linear-gradient(135deg,#2563eb,#06b6d4) !important;
+      color:white !important;
+      box-shadow:0 10px 24px rgba(37,99,235,.22);
+      transition:transform .16s ease, filter .16s ease;
+    }
+
+    button:hover{ transform:translateY(-1px); filter:saturate(1.08); }
+
+    button[onclick*="Regresar"],
+    button[onclick*="Cancelar"],
+    button[onclick*="muestra('login')"],
+    button[onclick*="compra_articulos')"] {
+      background:#f1f5f9 !important;
+      color:#334155 !important;
+      border:1px solid #cbd5e1 !important;
+      box-shadow:none;
+    }
+
+    button[onclick*="borra"],
+    button[onclick*="elimina_carrito"],
+    button[onclick*="elimina_articulo"],
+    button[onclick*="Quitar"]{
+      background:linear-gradient(135deg,#dc2626,#f97316) !important;
+      box-shadow:0 10px 24px rgba(220,38,38,.20);
+    }
+
+    button[onclick*="captura_articulo"],
+    button[onclick*="alta_articulo"]{
+      background:linear-gradient(135deg,#16a34a,#22c55e) !important;
+      box-shadow:0 10px 24px rgba(22,163,74,.20);
+    }
+
+    img{ border-radius:18px; object-fit:cover; background:#f8fafc; }
+
+    #alta_imagen, #consulta_imagen, #articulo_imagen{
+      display:block; margin:10px auto 12px;
+      border:1px solid var(--borde);
+    }
+
+    #articulo_imagen{ width:160px !important; height:120px; object-fit:contain; padding:10px; background:white; }
+
+    #resultados_articulos > div,
+    #resultados_carrito > div{
+      width:100%;
+      border:1px solid var(--borde) !important;
+      padding:16px !important;
+      margin-bottom:14px !important;
+      border-radius:24px;
+      background:linear-gradient(180deg,#ffffff,#f8fafc);
+      box-shadow:0 12px 28px rgba(15,23,42,.08);
+    }
+
+    #resultados_articulos img, #resultados_carrito img{
+      width:100% !important; max-width:220px; height:150px;
+      display:block; margin:0 auto 12px;
+      object-fit:contain; border:1px solid var(--borde);
+      background:white; padding:10px;
+    }
+
+    #resultados_articulos input[type="number"]{ max-width:140px; }
+
+    .footer-note{ text-align:center; color:#64748b; font-size:.86rem; margin-top:28px; }
+
+    @media (max-width:520px){
+      .brand-pill{ display:none; }
+      .app-shell{ padding:18px 12px 36px; }
+    }
+  </style>
+
+  <script src='/WSClient.js'></script>
+
+  <script>
+    // ── URLs de los microservicios (accedidos via Nginx API Gateway) ─────────────
+    var URL_USUARIOS  = "/usuarios/rest/ws";
+    var URL_ARTICULOS = "/articulos/rest/ws";
+    var URL_COMPRAS   = "/compras/rest/ws";
+
+    var id_usuario;
+    var token;
+    var foto = null;
+
+    function get(id) { return document.getElementById(id); }
+    function muestra(id) { get(id).style.display = "block"; }
+    function oculta(id) { get(id).style.display = "none"; }
+
+    function readSingleFile(files, imagen) {
+      var file = files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        imagen.src = reader.result;
+        foto = reader.result.split(',')[1];
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function sha256(texto) {
+      var encoder = new TextEncoder();
+      var datos = encoder.encode(texto);
+      var hashBuffer = await crypto.subtle.digest('SHA-256', datos);
+      var hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    // ── Login ─────────────────────────────────────────────────────────────────────
+    function limpia_login() {
+      get("login_email").value = "";
+      get("login_password").value = "";
+    }
+
+    function login() {
+      var cliente = new WSClient(URL_USUARIOS);
+      sha256(get("login_password").value).then(hash => {
+        cliente.get("login",
+          { email: get("login_email").value, password: hash },
+          function(code, result) {
+            if (code == 200) {
+              id_usuario = result.id_usuario;
+              token = result.token;
+              oculta("login");
+              muestra("menu");
+            } else alert(JSON.stringify(result));
+          });
+      });
+    }
+
+    // ── Alta usuario ──────────────────────────────────────────────────────────────
+    function limpia_alta() {
+      get("alta_email").value = "";
+      get("alta_password").value = "";
+      get("alta_nombre").value = "";
+      get("alta_apellido_paterno").value = "";
+      get("alta_apellido_materno").value = "";
+      get("alta_fecha_nacimiento").value = "";
+      get("alta_telefono").value = "";
+      get("alta_genero").value = "";
+      get("alta_imagen").src = "/usuario_sin_foto.png";
+      foto = null;
+    }
+
+    function alta() {
+      var cliente = new WSClient(URL_USUARIOS);
+      sha256(get("alta_password").value).then(hash => {
+        var usuario = {
+          email: get("alta_email").value,
+          password: hash,
+          nombre: get("alta_nombre").value,
+          apellido_paterno: get("alta_apellido_paterno").value,
+          apellido_materno: get("alta_apellido_materno").value != "" ? get("alta_apellido_materno").value : null,
+          fecha_nacimiento: get("alta_fecha_nacimiento").value != ""
+            ? new Date(get("alta_fecha_nacimiento").value).toISOString() : null,
+          telefono: get("alta_telefono").value != "" ? get("alta_telefono").value : null,
+          genero: get("alta_genero").value == "Masculino" ? "M"
+                : get("alta_genero").value == "Femenino" ? "F" : null,
+          foto: foto
+        };
+        cliente.post("alta_usuario", usuario, function(code, result) {
+          if (code == 200) {
+            alert("Se registró el usuario");
+            limpia_login();
+            oculta("alta_usuario");
+            muestra("login");
+          } else alert(JSON.stringify(result));
+        });
+      });
+    }
+
+    // ── Consulta / Modifica usuario ───────────────────────────────────────────────
+    function limpia_consulta() {
+      get("consulta_email").value = "";
+      get("consulta_password").value = "";
+      get("consulta_nombre").value = "";
+      get("consulta_apellido_paterno").value = "";
+      get("consulta_apellido_materno").value = "";
+      get("consulta_fecha_nacimiento").value = "";
+      get("consulta_telefono").value = "";
+      get("consulta_genero").value = "";
+      get("consulta_imagen").src = "/usuario_sin_foto.png";
+    }
+
+    function quita_foto() {
+      foto = null;
+      get("consulta_imagen").src = "/usuario_sin_foto.png";
+      get("consulta_file").value = "";
+    }
+
+    function formatearFecha(fecha) {
+      var d = new Date(fecha);
+      var pad = n => String(n).padStart(2,'0');
+      return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()) +
+             "T" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds());
+    }
+
+    function consulta() {
+      var cliente = new WSClient(URL_USUARIOS);
+      cliente.get("consulta_usuario",
+        { id_usuario: id_usuario, token: token },
+        function(code, result) {
+          if (code == 200) {
+            limpia_consulta();
+            oculta("menu");
+            muestra("consulta_usuario");
+            get("consulta_email").value = result.email;
+            get("consulta_nombre").value = result.nombre;
+            get("consulta_apellido_paterno").value = result.apellido_paterno;
+            get("consulta_apellido_materno").value = result.apellido_materno || "";
+            get("consulta_fecha_nacimiento").value = formatearFecha(new Date(result.fecha_nacimiento));
+            get("consulta_telefono").value = result.telefono || "";
+            get("consulta_genero").value = result.genero == "M" ? "Masculino"
+                                         : result.genero == "F" ? "Femenino" : "";
+            foto = result.foto;
+            get("consulta_imagen").src = foto ? "data:image/jpeg;base64," + foto : "/usuario_sin_foto.png";
+          } else alert(JSON.stringify(result));
+        });
+    }
+
+    function modifica() {
+      var cliente = new WSClient(URL_USUARIOS);
+      sha256(get("consulta_password").value).then(hash => {
+        var usuario = {
+          email: get("consulta_email").value,
+          password: hash,
+          nombre: get("consulta_nombre").value,
+          apellido_paterno: get("consulta_apellido_paterno").value,
+          apellido_materno: get("consulta_apellido_materno").value != "" ? get("consulta_apellido_materno").value : null,
+          fecha_nacimiento: get("consulta_fecha_nacimiento").value != ""
+            ? new Date(get("consulta_fecha_nacimiento").value).toISOString() : null,
+          telefono: get("consulta_telefono").value != "" ? get("consulta_telefono").value : null,
+          genero: get("consulta_genero").value == "Masculino" ? "M"
+                : get("consulta_genero").value == "Femenino" ? "F" : null,
+          foto: foto
+        };
+        cliente.put("modifica_usuario",
+          { id_usuario: id_usuario, token: token },
+          usuario,
+          function(code, result) {
+            if (code == 200) alert("Se modificó el perfil del usuario");
+            else alert(JSON.stringify(result));
+          });
+      });
+    }
+
+    function borra() {
+      var cliente = new WSClient(URL_USUARIOS);
+      cliente.delete("borra_usuario",
+        { id_usuario: id_usuario, token: token },
+        function(code, result) {
+          if (code == 200) {
+            alert("Se eliminó el perfil del usuario");
+            limpia_login();
+            oculta("menu");
+            muestra("login");
+          } else alert(JSON.stringify(result));
+        });
+    }
+
+    // ── Captura artículo (RF-FE-1) ────────────────────────────────────────────────
+    function alta_articulo() {
+      var articulo = {
+        nombre:      get("articulo_nombre").value,
+        descripcion: get("articulo_descripcion").value,
+        precio:      parseFloat(get("articulo_precio").value),
+        cantidad:    parseInt(get("articulo_cantidad").value),
+        fotografia:  foto
+      };
+
+      fetch(URL_ARTICULOS + "/alta_articulo?id_usuario=" + encodeURIComponent(id_usuario) +
+            "&token=" + encodeURIComponent(token), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(articulo)
+      })
+      .then(r => r.json().then(result => {
+        if (r.status == 200) {
+          alert("Artículo registrado correctamente");
+          get("articulo_nombre").value = "";
+          get("articulo_descripcion").value = "";
+          get("articulo_precio").value = "";
+          get("articulo_cantidad").value = "";
+          get("articulo_imagen").src = "/usuario_sin_foto.png";
+          foto = null;
+          oculta("captura_articulo");
+          muestra("menu");
+        } else alert(JSON.stringify(result));
+      }))
+      .catch(e => alert("Error: " + e.message));
+    }
+
+    // ── Compra artículos (RF-FE-2) ────────────────────────────────────────────────
+    function consulta_articulos() {
+      var cliente = new WSClient(URL_ARTICULOS);
+      cliente.get("consulta_articulos",
+        { palabra: get("busqueda_articulo").value, id_usuario: id_usuario, token: token },
+        function(code, result) {
+          if (code == 200) muestra_articulos(result);
+          else alert(JSON.stringify(result));
+        });
+    }
+
+    function muestra_articulos(articulos) {
+      if (articulos.length == 0) {
+        get("resultados_articulos").innerHTML = "<p style='text-align:center'>No se encontraron artículos</p>";
+        return;
+      }
+      var html = "";
+      for (var i = 0; i < articulos.length; i++) {
+        var a = articulos[i];
+        var imagen = a.fotografia ? "data:image/jpeg;base64," + a.fotografia : "/usuario_sin_foto.png";
+        html +=
+          "<div>" +
+            "<img src='" + imagen + "' width='80px'><br><br>" +
+            "<b>" + a.nombre + "</b><br>" +
+            a.descripcion + "<br>" +
+            "Precio: $" + a.precio + "<br><br>" +
+            "Cantidad<br>" +
+            "<input type='number' id='cantidad_" + a.id_articulo + "' value='1' min='1'><br><br>" +
+            "<button type='button' onclick='compra_articulo(" + a.id_articulo + ")'>Compra</button>" +
+          "</div>";
+      }
+      get("resultados_articulos").innerHTML = html;
+    }
+
+    function compra_articulo(id_articulo) {
+      var cantidad = parseInt(get("cantidad_" + id_articulo).value);
+      var compra = { id_articulo: id_articulo, cantidad: cantidad, id_usuario: id_usuario, token: token };
+
+      fetch(URL_COMPRAS + "/compra_articulo", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(compra)
+      })
+      .then(r => r.json().then(result => {
+        if (r.status == 200) { alert("Artículo agregado al carrito"); consulta_articulos(); }
+        else alert(JSON.stringify(result));
+      }))
+      .catch(e => alert("Error: " + e.message));
+    }
+
+    // ── Carrito de compra (RF-FE-2.3 a 2.5) ──────────────────────────────────────
+    function consulta_carrito_compra() {
+      var cliente = new WSClient(URL_COMPRAS);
+      cliente.get("consulta_carrito_compra",
+        { id_usuario: id_usuario, token: token },
+        function(code, result) {
+          if (code == 200) {
+            oculta("compra_articulos");
+            muestra("carrito_compra");
+            muestra_carrito(result);
+          } else alert(JSON.stringify(result));
+        });
+    }
+
+    function muestra_carrito(carrito) {
+      if (carrito.length == 0) {
+        get("resultados_carrito").innerHTML = "<p style='text-align:center'>El carrito está vacío</p>";
+        return;
+      }
+      var html = "";
+      var total = 0;
+      for (var i = 0; i < carrito.length; i++) {
+        var a = carrito[i];
+        var imagen = a.fotografia ? "data:image/jpeg;base64," + a.fotografia : "/usuario_sin_foto.png";
+        total += a.costo;
+        html +=
+          "<div>" +
+            "<img src='" + imagen + "' width='80px'><br><br>" +
+            "<b>" + a.nombre + "</b><br>" +
+            "Cantidad: " + a.cantidad + "<br>" +
+            "Precio: $" + a.precio + "<br>" +
+            "Costo: $" + a.costo.toFixed(2) + "<br><br>" +
+            "<button type='button' onclick='elimina_articulo_carrito_compra(" + a.id_articulo + ")'>Eliminar artículo</button>" +
+          "</div>";
+      }
+      html += "<h3 style='text-align:center'>Total: $" + total.toFixed(2) + "</h3>";
+      get("resultados_carrito").innerHTML = html;
+    }
+
+    function elimina_articulo_carrito_compra(id_articulo) {
+      var cliente = new WSClient(URL_COMPRAS);
+      cliente.delete("elimina_articulo_carrito_compra",
+        { id_usuario: id_usuario, id_articulo: id_articulo, token: token },
+        function(code, result) {
+          if (code == 200) { alert("Artículo eliminado del carrito"); consulta_carrito_compra(); }
+          else alert(JSON.stringify(result));
+        });
+    }
+
+    function elimina_carrito_compra() {
+      if (!confirm("¿Deseas eliminar todo el carrito?")) return;
+      var cliente = new WSClient(URL_COMPRAS);
+      cliente.delete("elimina_carrito_compra",
+        { id_usuario: id_usuario, token: token },
+        function(code, result) {
+          if (code == 200) { alert("Carrito eliminado"); consulta_carrito_compra(); }
+          else alert(JSON.stringify(result));
+        });
+    }
+  </script>
+</head>
+
+<body>
+
+<header class="app-header">
+  <div class="app-header-inner">
+    <div class="brand-box">
+      <div class="brand-icon"><i class="bi bi-bag-check-fill"></i></div>
+      <div><h1 class="brand-title">E-Commerce</h1></div>
+    </div>
+    <p class="brand-pill">Microservicios · AKS</p>
+  </div>
+</header>
+
+<main class="app-shell">
+
+  <!-- REGISTRO -->
+  <div id="alta_usuario" style="display:none">
+    <h2 style="text-align:center">Registro de usuario</h2>
+    Email *<br><input type="email" id="alta_email"><br>
+    Contraseña *<br><input type="password" id="alta_password"><br>
+    Nombre *<br><input type="text" id="alta_nombre"><br>
+    Apellido paterno *<br><input type="text" id="alta_apellido_paterno"><br>
+    Apellido materno<br><input type="text" id="alta_apellido_materno"><br>
+    Fecha de nacimiento *<br><input type="datetime-local" id="alta_fecha_nacimiento"><br>
+    Teléfono<br><input type="number" id="alta_telefono"><br>
+    Género<br>
+    <select id="alta_genero"><option></option><option>Masculino</option><option>Femenino</option></select>
+    <br><br>
+    <img id="alta_imagen" width="60px" src="/usuario_sin_foto.png"><br>
+    <input type="file" onchange="readSingleFile(files,get('alta_imagen'))" accept="image/*">
+    <br><br>
+    <button type="button" onclick="alta();">Registrar usuario</button><br><br>
+    <button type="button" onclick="limpia_login();oculta('alta_usuario');muestra('login')">Cancelar</button>
+  </div>
+
+  <!-- PERFIL -->
+  <div id="consulta_usuario" style="display:none">
+    <h2 style="text-align:center">Perfil del usuario</h2>
+    Email *<br><input type="email" id="consulta_email"><br>
+    Contraseña *<br><input type="password" id="consulta_password"><br>
+    Nombre *<br><input type="text" id="consulta_nombre"><br>
+    Apellido paterno *<br><input type="text" id="consulta_apellido_paterno"><br>
+    Apellido materno<br><input type="text" id="consulta_apellido_materno"><br>
+    Fecha de nacimiento *<br><input type="datetime-local" id="consulta_fecha_nacimiento"><br>
+    Teléfono<br><input type="number" id="consulta_telefono"><br>
+    Genero<br>
+    <select id="consulta_genero"><option></option><option>Masculino</option><option>Femenino</option></select>
+    <br><br>
+    <img id="consulta_imagen" width="60px" src="/usuario_sin_foto.png">
+    <input type="file" id="consulta_file" onchange="readSingleFile(files,get('consulta_imagen'))" accept="image/*">
+    <br>
+    <button onclick="quita_foto()">Quitar foto</button><br><br>
+    <button type="button" onclick="modifica()">Guardar cambios</button><br><br>
+    <button type="button" onclick="oculta('consulta_usuario');muestra('menu')">Regresar</button>
+  </div>
+
+  <!-- MENU -->
+  <div id="menu" style="display:none">
+    <h2 style="text-align:center">Menú principal</h2>
+    <button type="button" onclick="consulta();">Perfil del usuario</button><br><br>
+    <button type="button" onclick="oculta('menu');muestra('captura_articulo')">Captura de artículo</button><br><br>
+    <button type="button" onclick="oculta('menu');muestra('compra_articulos')">Compra de artículos</button><br><br>
+    <button type="button" onclick="if(confirm('¿Deseas eliminar el perfil del usuario?')){borra();}">Eliminar perfil</button><br><br>
+    <button type="button" onclick="limpia_login();oculta('menu');muestra('login')">Salir</button>
+  </div>
+
+  <!-- CAPTURA ARTICULO -->
+  <div id="captura_articulo" style="display:none">
+    <h2 style="text-align:center">Captura de artículo</h2>
+    Nombre del artículo *<br><input type="text" id="articulo_nombre"><br><br>
+    Descripción *<br><textarea id="articulo_descripcion"></textarea><br><br>
+    Precio *<br><input type="number" step="0.01" id="articulo_precio"><br><br>
+    Cantidad en existencia *<br><input type="number" id="articulo_cantidad"><br><br>
+    Fotografía<br>
+    <img id="articulo_imagen" width="120px" src="/usuario_sin_foto.png"><br><br>
+    <input type="file" onchange="readSingleFile(files,get('articulo_imagen'))" accept="image/*"><br><br>
+    <button type="button" onclick="alta_articulo();">Guardar artículo</button><br><br>
+    <button type="button" onclick="oculta('captura_articulo');muestra('menu')">Regresar</button>
+  </div>
+
+  <!-- COMPRA -->
+  <div id="compra_articulos" style="display:none">
+    <h2 style="text-align:center">Compra de artículos</h2>
+    Palabra clave<br>
+    <input type="text" id="busqueda_articulo" placeholder="Ej. laptop"><br><br>
+    <button type="button" onclick="consulta_articulos();">Buscar</button><br><br>
+    <button type="button" onclick="consulta_carrito_compra();">Carrito de compra</button><br><br>
+    <div id="resultados_articulos"></div><br>
+    <button type="button" onclick="oculta('compra_articulos');muestra('menu')">Regresar</button>
+  </div>
+
+  <!-- CARRITO -->
+  <div id="carrito_compra" style="display:none">
+    <h2 style="text-align:center">Artículos en el carrito</h2>
+    <div id="resultados_carrito"></div><br>
+    <button type="button" onclick="elimina_carrito_compra();">Eliminar carrito</button><br><br>
+    <button type="button" onclick="oculta('carrito_compra');muestra('compra_articulos')">Seguir comprando</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login">
+    <h2 style="text-align:center">Acceso al sistema</h2>
+    Email<br><input type="email" id="login_email"><br><br>
+    Password<br><input type="password" id="login_password"><br><br>
+    <button type="button" onclick="login()">Aceptar</button><br><br>
+    <button type="button" onclick="limpia_alta();oculta('login');muestra('alta_usuario')">Registro de usuario</button>
+  </div>
+
+</main>
+
+<p class="footer-note">© 2026 E-Commerce · Microservicios sobre AKS</p>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

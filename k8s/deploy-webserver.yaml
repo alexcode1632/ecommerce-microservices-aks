@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver-deploy
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+        - name: webserver
+          image: t92023630200acr.azurecr.io/webserver:latest
+          ports:
+            - containerPort: 80
+          # El PVC de Azure Files sobreescribe /usr/share/nginx/html
+          # con los archivos del frontend (RNF-8)
+          volumeMounts:
+            - name: frontend-storage
+              mountPath: /usr/share/nginx/html
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+      volumes:
+        - name: frontend-storage
+          persistentVolumeClaim:
+            claimName: frontend-pvc

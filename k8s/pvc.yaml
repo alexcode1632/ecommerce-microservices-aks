@@ -1,0 +1,14 @@
+# Persistent Volume Claim para el frontend (RNF-8)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frontend-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: frontend-pv    # vincula al PV creado arriba

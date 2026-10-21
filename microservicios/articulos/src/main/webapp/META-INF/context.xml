@@ -1,0 +1,13 @@
+<Context>
+  <Resource
+    name="jdbc/datasource_Articulos"
+    auth="Container"
+    type="javax.sql.DataSource"
+    maxActive="50"
+    maxIdle="10"
+    maxWait="10000"
+    username="${DB_USER}"
+    password="${DB_PASSWORD}"
+    driverClassName="com.mysql.cj.jdbc.Driver"
+    url="jdbc:mysql://${DB_HOST}/t92023630200bdga?serverTimezone=UTC&amp;sslMode=DISABLED&amp;allowPublicKeyRetrieval=true"/>
+</Context>

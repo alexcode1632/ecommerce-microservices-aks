@@ -1,0 +1,21 @@
+# Private keys and certificates: never commit
+*.key
+*.pem
+*.csr
+*.srl
+*.crt
+*.p12
+
+# Build output
+target/
+*.war
+
+# OS / IDE
+.DS_Store
+__MACOSX/
+.idea/
+.vscode/
+*.iml
+
+# Local env files
+.env

@@ -1,0 +1,24 @@
+# Persistent Volume usando Azure Files (RNF-8)
+# Nomenclatura: t92023630200caf (cuenta de almacenamiento) / t92023630200rca (recurso compartido)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: frontend-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany           # Azure Files soporta acceso múltiple (varios pods)
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azurefile
+  csi:
+    driver: file.csi.azure.com
+    readOnly: false
+    volumeHandle: frontend-pv-handle
+    volumeAttributes:
+      resourceGroup: <RESOURCE_GROUP>        # reemplazar
+      storageAccount: t92023630200caf
+      shareName: t92023630200rca
+    nodeStageSecretRef:
+      name: azure-files-secret
+      namespace: default
